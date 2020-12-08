@@ -6,13 +6,15 @@
 //!   https://github.com/micropython/micropython/blob/master/py/compile.c
 
 use crate::error::{CompileError, CompileErrorType};
-pub use crate::mode::Mode;
 use crate::symboltable::{make_symbol_table, statements_to_symbol_table, SymbolScope, SymbolTable};
+use alloc::{borrow::ToOwned, boxed::Box, format, string::String, vec, vec::Vec};
 use indexmap::IndexSet;
 use itertools::Itertools;
 use num_complex::Complex64;
 use rustpython_ast as ast;
 use rustpython_bytecode::bytecode::{self, CallType, CodeObject, Instruction, Label};
+
+pub use crate::mode::Mode;
 
 type CompileResult<T> = Result<T, CompileError>;
 
@@ -2471,7 +2473,7 @@ impl Compiler {
             ..
         } = self.current_codeinfo();
         let actual_label = Label(instructions.len());
-        let prev_val = std::mem::replace(&mut label_map[label.0], Some(actual_label));
+        let prev_val = core::mem::replace(&mut label_map[label.0], Some(actual_label));
         debug_assert!(
             prev_val.map_or(true, |x| x == actual_label),
             "double-set a label"

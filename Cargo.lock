@@ -1672,6 +1672,7 @@ dependencies = [
  "rustpython-ast",
  "rustpython-bytecode",
  "rustpython-parser",
+ "scopeguard",
 ]
 
 [[package]]

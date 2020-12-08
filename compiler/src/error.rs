@@ -1,7 +1,9 @@
 use rustpython_ast::Location;
 
+use alloc::string::String;
+use core::fmt;
+#[cfg(feature = "std")]
 use std::error::Error;
-use std::fmt;
 
 #[derive(Debug)]
 pub struct CompileError {
@@ -74,6 +76,7 @@ impl fmt::Display for CompileErrorType {
     }
 }
 
+#[cfg(feature = "std")]
 impl Error for CompileErrorType {}
 
 impl fmt::Display for CompileError {
@@ -82,8 +85,5 @@ impl fmt::Display for CompileError {
     }
 }
 
-impl Error for CompileError {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        None
-    }
-}
+#[cfg(feature = "std")]
+impl Error for CompileError {}
