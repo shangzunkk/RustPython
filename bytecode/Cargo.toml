@@ -7,6 +7,9 @@ edition = "2018"
 repository = "https://github.com/RustPython/RustPython"
 license = "MIT"
 
+[features]
+std = []
+default = ["std"]
 
 [dependencies]
 bincode =  "1.1"

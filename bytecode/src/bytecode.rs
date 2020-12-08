@@ -1,14 +1,15 @@
 //! Implement python as a virtual machine with bytecodes. This module
 //! implements bytecode structure.
 
+use alloc::collections::BTreeSet;
+use alloc::{borrow::ToOwned, boxed::Box, format, string::String, vec::Vec};
 use bitflags::bitflags;
 use bstr::ByteSlice;
+use core::fmt;
 use itertools::Itertools;
 use num_bigint::BigInt;
 use num_complex::Complex64;
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeSet;
-use std::fmt;
 
 /// Sourcecode location.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
@@ -733,11 +734,49 @@ impl<C: Constant> CodeObject<C> {
     }
 }
 
+pub struct CodeDeserializeError {
+    inner: DeserializeErrorKind,
+}
+enum DeserializeErrorKind {
+    Lz(lz_fear::framed::DecompressionError),
+    Bincode(bincode::Error),
+}
+impl fmt::Debug for CodeDeserializeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self.inner {
+            DeserializeErrorKind::Lz(lz) => lz.fmt(f),
+            DeserializeErrorKind::Bincode(bc) => bc.fmt(f),
+        }
+    }
+}
+impl fmt::Display for CodeDeserializeError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self.inner {
+            DeserializeErrorKind::Lz(lz) => lz.fmt(f),
+            DeserializeErrorKind::Bincode(bc) => bc.fmt(f),
+        }
+    }
+}
+#[cfg(feature = "std")]
+impl std::error::Error for CodeDeserializeError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        Some(match &self.inner {
+            DeserializeErrorKind::Lz(lz) => lz,
+            DeserializeErrorKind::Bincode(bc) => bc,
+        })
+    }
+}
+
 impl CodeObject<ConstantData> {
     /// Load a code object from bytes
-    pub fn from_bytes(data: &[u8]) -> Result<Self, Box<dyn std::error::Error>> {
-        let reader = lz_fear::framed::LZ4FrameReader::new(data)?;
-        Ok(bincode::deserialize_from(reader.into_read())?)
+    pub fn from_bytes(data: &[u8]) -> Result<Self, CodeDeserializeError> {
+        let reader =
+            lz_fear::framed::LZ4FrameReader::new(data).map_err(|e| CodeDeserializeError {
+                inner: DeserializeErrorKind::Lz(e),
+            })?;
+        bincode::deserialize_from(reader.into_read()).map_err(|e| CodeDeserializeError {
+            inner: DeserializeErrorKind::Bincode(e),
+        })
     }
 
     /// Serialize this bytecode to bytes.
