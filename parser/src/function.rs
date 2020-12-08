@@ -1,4 +1,5 @@
-use std::collections::HashSet;
+use alloc::{string::String, vec, vec::Vec};
+use hashbrown::HashSet;
 
 use crate::ast;
 use crate::error::{LexicalError, LexicalErrorType};

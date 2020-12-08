@@ -1,3 +1,6 @@
 fn main() {
-    lalrpop::process_root().unwrap()
+    lalrpop::Configuration::new()
+        .no_std()
+        .process_current_dir()
+        .unwrap();
 }
