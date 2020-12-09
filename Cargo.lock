@@ -1716,12 +1716,12 @@ dependencies = [
 name = "rustpython-compiler-core"
 version = "0.1.2"
 dependencies = [
- "arrayvec",
  "indexmap",
  "insta",
  "itertools",
  "log",
  "num-complex",
+ "rustc-hash",
  "rustpython-ast",
  "rustpython-bytecode",
  "rustpython-parser",
@@ -1770,6 +1770,7 @@ dependencies = [
  "num-bigint",
  "num-traits",
  "phf",
+ "rustc-hash",
  "rustpython-ast",
  "unic-emoji-char",
  "unic-ucd-ident",

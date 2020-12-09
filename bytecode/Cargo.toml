@@ -15,8 +15,8 @@ default = ["std"]
 bincode =  "1.1"
 bitflags = "1.1"
 lz-fear = "0.1"
-num-bigint = { version = "0.3", features = ["serde"] }
-num-complex = { version = "0.3", features = ["serde"] }
+num-bigint = { version = "0.3", default-features = false, features = ["serde"] }
+num-complex = { version = "0.3", default-features = false, features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 itertools = "0.9"
-bstr = "0.2"
+bstr = { version = "0.2", default-features = false }

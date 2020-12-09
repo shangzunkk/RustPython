@@ -8,9 +8,9 @@ Inspirational file: https://github.com/python/cpython/blob/master/Python/symtabl
 */
 
 use crate::error::{CompileError, CompileErrorType};
+use crate::IndexMap;
 use alloc::{borrow::ToOwned, format, string::String, vec, vec::Vec};
 use core::fmt;
-use indexmap::map::IndexMap;
 use rustpython_ast::{self as ast, Location};
 
 pub fn make_symbol_table(program: &ast::Program) -> Result<SymbolTable, SymbolTableError> {
@@ -59,7 +59,7 @@ impl SymbolTable {
             typ,
             line_number,
             is_nested,
-            symbols: IndexMap::new(),
+            symbols: IndexMap::default(),
             sub_tables: vec![],
         }
     }

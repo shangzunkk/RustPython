@@ -6,6 +6,10 @@
 
 extern crate alloc;
 
+type IndexMap<K, V> =
+    indexmap::IndexMap<K, V, core::hash::BuildHasherDefault<rustc_hash::FxHasher>>;
+type IndexSet<T> = indexmap::IndexSet<T, core::hash::BuildHasherDefault<rustc_hash::FxHasher>>;
+
 #[macro_use]
 extern crate log;
 

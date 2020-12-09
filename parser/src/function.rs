@@ -1,5 +1,7 @@
 use alloc::{string::String, vec, vec::Vec};
+use core::hash::BuildHasherDefault;
 use hashbrown::HashSet;
+use rustc_hash::FxHasher;
 
 use crate::ast;
 use crate::error::{LexicalError, LexicalErrorType};
@@ -46,7 +48,8 @@ pub fn parse_args(func_args: Vec<FunctionArgument>) -> Result<ast::ArgumentList,
     let mut args = vec![];
     let mut keywords = vec![];
 
-    let mut keyword_names = HashSet::with_capacity(func_args.len());
+    let build_hasher = BuildHasherDefault::<FxHasher>::default();
+    let mut keyword_names = HashSet::with_capacity_and_hasher(func_args.len(), build_hasher);
     for (name, value) in func_args {
         match name {
             Some(n) => {
